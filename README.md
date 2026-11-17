@@ -6,6 +6,8 @@
 Проект использует Django, Django REST Framework, Uvicorn и PostgreSQL. OpenAI Codex использовался для разработки интерфейса, 
 настройки Docker и проверки приложения.
 
+Временное развертывание доступно по адресу: https://todo-web-site.duckdns.org/
+
 ## Запуск через Docker Compose:
 
 Понадобятся Git, запущенный Docker и Docker Compose.
