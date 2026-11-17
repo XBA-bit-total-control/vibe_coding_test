@@ -1,0 +1,79 @@
+{% extends 'app/tasks_base.html' %}
+
+{% block title %}Мои задачи{% endblock %}
+
+{% block content %}
+        <header class="workspace-header panel">
+            <div class="workspace-title">
+                <h1>Мои задачи</h1>
+                <span class="account-name">{{ request.user.get_username }}</span>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="button-secondary">Выйти</button>
+            </form>
+        </header>
+
+        <form class="task-create panel" action="{% url 'tasks' %}" method="post" data-task-method="POST">
+            {% csrf_token %}
+            <label for="new-task">Новая задача</label>
+            <div class="task-create-fields">
+                <input id="new-task" name="title" type="text" placeholder="Название задачи" required minlength="5" maxlength="200" aria-describedby="create-error">
+            </div>
+            <label for="new-task-description">Описание</label>
+            <textarea id="new-task-description" name="description" rows="3" maxlength="1000" aria-describedby="description-hint create-error"></textarea>
+            <small id="description-hint" class="description-hint">Необязательно. От 10 до 1000 символов.</small>
+            <div class="task-create-fields">
+                <button type="submit">Добавить</button>
+            </div>
+            <p id="create-error" class="task-error" role="alert" hidden></p>
+        </form>
+
+        <form class="task-filters panel" action="{% url 'task_list' %}" method="get" aria-label="Фильтрация задач">
+            <div class="task-filter-field">
+                <label for="filter-status">Статус</label>
+                <select id="filter-status" name="status">
+                    <option value="">Все статусы</option>
+                    {% for value, label in statuses %}
+                        <option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label|capfirst }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="task-filter-field">
+                <label for="filter-date">По дате добавления</label>
+                <select id="filter-date" name="date">
+                    <option value="new"{% if date_order == 'new' %} selected{% endif %}>Сначала новые</option>
+                    <option value="old"{% if date_order == 'old' %} selected{% endif %}>Сначала старые</option>
+                </select>
+            </div>
+            <button type="submit" class="button-secondary">Применить</button>
+            {% if selected_status or date_order == 'old' %}
+                <a href="{% url 'task_list' %}">Сбросить</a>
+            {% endif %}
+        </form>
+
+        <noscript><p class="panel">Для добавления, изменения и удаления задач включите JavaScript.</p></noscript>
+
+        <div id="task-results">
+        {% if tasks %}
+            <ul class="task-list" aria-label="Список задач">
+                {% for task in tasks %}
+                    <li class="task-card panel">
+                        {% include 'app/task_card.html' with detail_view=False %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% elif selected_status %}
+            <p class="panel empty-tasks">Задач с выбранным статусом нет.</p>
+        {% else %}
+            <p class="panel empty-tasks">Задач пока нет. Добавь первую задачу выше.</p>
+        {% endif %}
+        </div>
+{% endblock %}
+
+{% block notifications %}
+    <div class="task-toast" hidden>
+        <p role="status">Задача создана</p>
+        <button type="button" class="task-toast-close" aria-label="Закрыть уведомление">&times;</button>
+    </div>
+{% endblock %}

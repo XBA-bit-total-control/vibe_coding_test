@@ -1,0 +1,8 @@
+.git
+.idea
+.venv
+.env
+.env.*
+staticfiles
+**/__pycache__
+**/*.py[oc]

@@ -1,0 +1,19 @@
+{% load static %}<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'app/registration.css' %}">
+    <link rel="stylesheet" href="{% static 'app/tasks.css' %}?v=2">
+    <script src="{% static 'app/task-pattern.js' %}" defer></script>
+    <script src="{% static 'app/tasks.js' %}?v=2" defer></script>
+</head>
+<body class="tasks-page">
+    <div class="task-pattern" aria-hidden="true"></div>
+    <main class="workspace" data-login-url="{% url 'login' %}">
+        {% block content %}{% endblock %}
+    </main>
+    {% block notifications %}{% endblock %}
+</body>
+</html>

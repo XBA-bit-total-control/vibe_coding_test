@@ -1,0 +1,12 @@
+{% extends 'app/tasks_base.html' %}
+
+{% block title %}{{ task.title }} · Мои задачи{% endblock %}
+
+{% block content %}
+    <nav class="panel" aria-label="Навигация">
+        <a href="{% url 'task_list' %}">← К списку задач</a>
+    </nav>
+    <article class="task-card panel">
+        {% include 'app/task_card.html' with detail_view=True %}
+    </article>
+{% endblock %}

@@ -1,0 +1,37 @@
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-todo-local-development}
+      DEBUG: "False"
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-127.0.0.1,localhost}
+      DB_ENGINE: django.db.backends.postgresql
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${DB_NAME:-todo}
+      DB_USER: ${DB_USER:-todo}
+      DB_PASSWORD: ${DB_PASSWORD:-todo-local-password}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-todo}
+      POSTGRES_USER: ${DB_USER:-todo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-todo-local-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  postgres_data:
+    driver: local
